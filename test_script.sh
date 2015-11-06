@@ -27,7 +27,7 @@ do
     if [[ "$(($i % 100))" == "9" ]]
     then
         echo "clearing cache"
-        umount googletorrents
+        umount $mountp
         google-drive-ocamlfuse -cc
         google-drive-ocamlfuse $mountp
     fi
