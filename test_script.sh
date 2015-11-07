@@ -1,7 +1,13 @@
 #!/bin/bash
 
+if [[ $# -ne 1 ]]
+then
+	echo "usage $0 mountp"
+	exit 1
+fi
+
 i=1
-mountp=drive
+mountp=$1
 drive_folder=$mountp/storage_test3
 bigfile=Bigfile
 
