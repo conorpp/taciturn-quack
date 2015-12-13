@@ -8,7 +8,7 @@ fi
 
 i=1
 mountp=$1
-drive_folder=$mountp/storage_test3
+drive_folder=$mountp/
 bigfile=Bigfile
 
 if [[ ! -f $bigfile ]]
