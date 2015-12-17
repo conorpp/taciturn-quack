@@ -1,16 +1,14 @@
 #!/bin/bash
-
-if [[ $# -ne 1 ]]
+if [[ $# -ne 2 ]]
 then
-	echo "usage $0 mountp"
-	exit 1
+        echo "usage $0 mountp drivepath"
+        exit 1
 fi
-
 i=1
 mountp=$1
-drive_folder=$mountp/
+drive_folder=$2
+google-drive-ocamlfuse $mountp
 bigfile=Bigfile
-
 if [[ ! -f $bigfile ]]
 then
     echo "initializing first big file and encypting..."
@@ -21,15 +19,12 @@ fi
 bigfile=bigfile"$RANDOM""$RANDOM""$RANDOM"
 cp Bigfile "$bigfile".bin
 nextfile="$bigfile".bin
-
 echo starting
-
 while true
 do
     i=$(($i+1))
     lastfile=$nextfile
     nextfile=$bigfile"$i".bin
-
     if [[ "$(($i % 100))" == "9" ]]
     then
         echo "clearing cache"
@@ -37,7 +32,6 @@ do
         google-drive-ocamlfuse -cc
         google-drive-ocamlfuse $mountp
     fi
-
     openssl aes-256-cbc -in $lastfile -pass pass:pass"$RANDOM"word | head -c $((150*(1<<20))) > $nextfile
     cp $nextfile $drive_folder/$nextfile
     sync
@@ -45,13 +39,10 @@ do
     # test it worked until it worked
     while [ $(du -b $drive_folder/$nextfile |awk '{print $1}') == '0' ] ;
     do
-	    echo "transfer failed - trying again"
+            echo "transfer failed - trying again"
         cp $nextfile $drive_folder/$nextfile
-    	sync
+        sync
     done
-
     rm $lastfile
-
     echo "$lastfile uploaded"
-
 done
